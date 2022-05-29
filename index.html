@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- HEAD -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hangman in HTML</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+  </head>
+
+<!-- BODY -->
+  <body>
+  <!-- TITLE -->
+  <h3>Hangman</h3>
+  <!-- ANSWER/PROGRESS (HIDDEN)-->
+  <p hidden>Are you looking for the answer?</p>
+  <p id="answer" hidden></p>
+  <p id="progress" hidden></p>
+  <!-- SCORE -->
+  <p id="score" >Score: 0</p>
+  <!-- SELECT DIFFICULTY -->
+  <!-- <p>Select difficulty</p><p id="difficulty">Easy</p> -->
+  <p id="difficulty">Select difficulty: Easy</p>
+  <button onclick="change_difficulty('Easy')">Easy</button>
+  &nbsp;
+  <button onclick="change_difficulty('Medium')">Medium</button>
+  &nbsp;
+  <button onclick="change_difficulty('Hard')">Hard</button>
+  &nbsp;
+  <button onclick="change_difficulty('Impossible')">Impossible</button>
+  <br>
+  <!-- START BUTTON -->
+  <button id="start" onclick="start()">Start playing</button>
+  <!-- REVEAL BUTTON -->
+  <button id="reveal" onclick="reveal()">Reveal</button>
+  <br>
+  <br>
+  <!-- ALPHABET BUTTONS-->
+  <button id="A_button" onclick="guess_alpha('A')" bg="blue">A</button>
+  <button id="B_button" onclick="guess_alpha('B')">B</button>
+  <button id="C_button" onclick="guess_alpha('C')">C</button>
+  <button id="D_button" onclick="guess_alpha('D')">D</button>
+  <button id="E_button" onclick="guess_alpha('E')">E</button>
+  <button id="F_button" onclick="guess_alpha('F')">F</button>
+  <button id="G_button" onclick="guess_alpha('G')">G</button>
+  <button id="H_button" onclick="guess_alpha('H')">H</button>
+  <button id="I_button" onclick="guess_alpha('I')">I</button><br>
+  <button id="J_button" onclick="guess_alpha('J')">J</button>
+  <button id="K_button" onclick="guess_alpha('K')">K</button>
+  <button id="L_button" onclick="guess_alpha('L')">L</button>
+  <button id="M_button" onclick="guess_alpha('M')">M</button>
+  <button id="N_button" onclick="guess_alpha('N')">N</button>
+  <button id="O_button" onclick="guess_alpha('O')">O</button>
+  <button id="P_button" onclick="guess_alpha('P')">P</button>
+  <button id="Q_button" onclick="guess_alpha('Q')">Q</button>
+  <button id="R_button" onclick="guess_alpha('R')">R</button><br>
+  <button id="S_button" onclick="guess_alpha('S')">S</button>
+  <button id="T_button" onclick="guess_alpha('T')">T</button>
+  <button id="U_button" onclick="guess_alpha('U')">U</button>
+  <button id="V_button" onclick="guess_alpha('V')">V</button>
+  <button id="W_button" onclick="guess_alpha('W')">W</button>
+  <button id="X_button" onclick="guess_alpha('X')">X</button>
+  <button id="Y_button" onclick="guess_alpha('Y')">Y</button>
+  <button id="Z_button" onclick="guess_alpha('Z')">Z</button>
+  <br>
+  <br>
+  <!-- Text for progress of guessed word: -->
+  <p id="displayed_progress"></p>
+  <!-- Index/Image of hangman -->
+  <p id="current_img" hidden>0</p>
+  <img id="hangman_img" src="hangman_imgs\hangman0.jpg" alt="DON'T GET HANGED!" width="auto" height="200">
+  <!-- LIVES -->
+  <p id="lives">Lives left: 10</p>
+  <!-- additional text -->
+  <p>Guessed alphabets:</p>
+  <p id="guessed_alphabets"></p>
+  <p id="message"></p>
+</body>
+
+
+</html>
+
+<!-- JavaScript -->
+<script>
+function change_difficulty(difficulty){ // standalone
+  var difficulty_element = document.getElementById("difficulty");
+  difficulty_element.textContent = "Select difficulty: ".concat(difficulty);
+}
+
+function generate_random_word(){ //standalone
+  var difficulty = document.getElementById("difficulty").textContent.slice(19);
+  if (difficulty=="Easy"){
+    var words = ['TETROLE', 'CARPUS', 'ANTEVA', 'CHORIC', 'COWHERB', 'BLUNTIE', 'BLATHER', 'CABBAGE', 'DUNCAN', 'PROFIT', 
+    'YEASTY', 'WARWORN', 'UNHOSED', 'DECAYED', 'OVICIDE', 'HELLIER', 'COMBER', 'COWARDY', 'VILAYET', 'HOGSHIP', 'MUTINY', 
+    'AGNOMEN', 'FORCEPS', 'STYXIAN', 'LENCAN', 'PRECAVA', 'AYMARA', 'LIMPING', 'ROBUST', 'FLITING', 'FANTOD', 'RAMUSI', 
+    'SCOBBY', 'OVIPARA', 'VOCABLE', 'PIGHTLE', 'RACHEL', 'HODMAN', 'MONGLER', 'MONERAL', 'KARSTIC', 'SHORER', 'LOVABLY', 
+    'ATHORT', 'MUSEUM', 'SORAGE', 'GLEETY', 'LIKING', 'ASTHMA', 'HEEDER', 'SETWORK', 'HELDER', 'COMAMIE', 'SLOVAK', 'MURILLO', 
+    'LERRET', 'DYPHONE', 'PROVING', 'CHUHRA', 'JOWTER', 'RESHARE', 'ARIDED', 'MURALLY', 'GRABEN', 'DOWILY', 'EXPLORE', 'ECTATIC', 
+    'FREEZE', 'SNAPPS', 'CANGUE', 'DRUITH', 'AFRIDI', 'TURBARY', 'ZYTHEM', 'CALIPEE', 'MOROSIS', 'HUZOOR', 'DOPPLER', 'DUNNESS', 
+    'NONJURY', 'MONONCH', 'HEXINE', 'CASTOFF', 'COBWEB', 'WINRACE', 'COPTIS', 'DIURNA', 'UPFLOW', 'PUJUNAN', 'EARING', 'SICCATE', 
+    'FACTOR', 'WHEWER', 'TALEFUL', 'URAZOLE', 'ALBARCO', 'GWYNIAD', 'REAVOID', 'TAMPANG', 'DOCETAE', 'BETHEL', 'HESIONE', 'REGLOW', 
+    'HEAUMER', 'JOWLER', 'RETHROW', 'BASHFUL', 'MUCKER', 'RIFIAN', 'STUMBLE', 'MENDEE', 'UNLOYAL', 'OVERWAY', 'ASTERN', 'ANONYMA', 
+    'TOROSE', 'COCOON', 'QUININA', 'DURENE', 'TAPUYAN', 'DAMAGES', 'WAIKLY', 'YODELER', 'GRIQUA', 'GRISARD', 'PETRIE', 'EDWINA', 
+    'RESEAT', 'OCYROE', 'EXTIMA', 'GWEDUC', 'FENCING', 'GAELDOM', 'LYCHNIC', 'THIONIC', 'SEAGIRT', 'CHUVASH', 'TROUBLE', 'HIATION', 
+    'GOGGLY', 'SILETZ', 'BOUNCER', 'ADITUS', 'FALISCI', 'RESMELL', 'WAGERER', 'RESLATE', 'LOOPLET', 'DEMOTIC', 'RUNTISH'];
+  } else if (difficulty=="Medium"){
+    var words = ['EXSERTED', 'ASSIGNEE', 'PIPEWORK', 'OXYRHINE', 'CELLIFUGAL', 'CONSUMPTED', 'VERBENATE', 'AUTOGENOUS', 'AUSTRALIC', 
+    'HEADLONGS', 'TELEVIEW', 'SONDERBUND', 'ANTIFREEZE', 'ARTLESSLY', 'FOREDOOR', 'PREGUIDE', 'GRUDGERY', 'DEMONOLOGY', 'TELETHON', 
+    'HABITATE', 'SHALLOWISH', 'MORBIDLY', 'LUSHNESS', 'FISSIPEDA', 'KNACKERY', 'DISPERMY', 'BETORCINOL', 'ZEALOTIC', 'SUMMERBIRD', 
+    'RIGIDITY', 'POSTULANT', 'CRATEFUL', 'AGITATOR', 'SQUADRISM', 'VIRGINITY', 'PARABOLA', 'OVERBANDY', 'INFIRMARER', 'GLOBULYSIS', 
+    'LARCENOUS', 'SPOKEWISE', 'REGISTRAL', 'REVIVATORY', 'SHANKPIECE', 'MOUTHISHLY', 'FOREWORD', 'CHIASMIC', 'WOODWARDIA', 'LITTRESS', 
+    'RAMBOOZE', 'AMBIOPIA', 'EXTRABOLD', 'SIDONIAN', 'BIBENZYL', 'EQUIVOCATE', 'SLIMINESS', 'SUPERUNFIT', 'ASTOMOUS', 'HALIBIOS', 
+    'ENTOPROCTA', 'PREFAVOR', 'NIPPITATE', 'IMPORTABLY', 'FORETYPE', 'OPISTHION', 'POTHOOKERY', 'UNSANGUINE', 'NONAGENCY', 'KIRKYARD', 
+    'ENDAORTIC', 'FEVERBERRY', 'PHONIKON', 'PHTHALAZIN', 'PLECOTINAE', 'CONFORMIST', 'SPATIALITY', 'BUNCHILY', 'OPTICIST', 'SNUGGERY', 
+    'TRANSMIT', 'LOPHODONT', 'UNCHAPLAIN', 'STRUTHIOUS', 'ITEACEAE', 'RASHNESS', 'CHONOLITH', 'PUFFBALL', 'SCHWALBEA', 'ROMAGNOL', 
+    'PRECIPICE', 'SIESTALAND', 'PENOLOGIC', 'DESMOSIS', 'GURMUKHI', 'ANTEDATE', 'STEERINGLY', 'MIGONITIS', 'MESADENIA', 'ECSTATIC', 
+    'CARBAMIDE', 'PHYTOGRAPH', 'UNREFILLED', 'CAFTANED', 'RESPLICE', 'NOTIONIST', 'LICHENLIKE', 'BLUEBOOK', 'LIPOTYPE', 'PARGEBOARD', 
+    'TAINTWORM', 'SOLIPSISM', 'AUTOMOLITE', 'KRAURITE', 'NOSOLOGIST', 'CORDIALITY', 'AEROPLANE', 'GNASHINGLY', 'PIPINGLY', 'COTRIPPER', 
+    'RINSABLE', 'AGARICIC', 'ULNORADIAL', 'EXOTHECATE', 'ASSAPANIC', 'MISAUNTER', 'PIMENTON', 'QUINTADENE', 'SPONDIAS', 'CALVINIAN', 
+    'SNORTINGLY', 'PREDECEASE', 'UNVARYING', 'CHANDLER', 'ALUCONIDAE', 'PLATONIZE', 'VENETIANED', 'CHAMAELEO', 'OTACOUSTIC', 'PERIOECID', 
+    'REDSTART', 'CUCKOLDY', 'GLYCEROSE', 'TRICUSSATE', 'INKINESS', 'UNNOTICING', 'APOSTEMATE', 'AMAREVOLE', 'ELIASITE', 'EXPUNCTION', 
+    'AGACELLA'];
+  } else if (difficulty=="Hard"){
+    var words = ['ECTROPOMETER', 'SETIPAROUS', 'SUBARBORACEOUS', 'PEARLSTONE', 'ZOROASTRISM', 'HALIBIOTIC', 'ARTILLERYMAN', 
+    'MELOTRAGIC', 'SERALBUMIN', 'ASCLEPIADEOUS', 'ORIGINABLE', 'BLASTODISK', 'COINTEREST', 'REWARDABLENESS', 'POSTRETINAL', 
+    'DRAGONTAIL', 'WRITHENECK', 'THERAPEUTICAL', 'UNSQUEEZED', 'ACROPOLITAN', 'PAPILLULATE', 'HOPKINSIANISM', 'STYLOGRAPHY', 
+    'PROCATARXIS', 'PROVERBIALIZE', 'INTRANUCLEAR', 'SEMIFOSSIL', 'SUPERSANGUINE', 'OCTODECIMO', 'MEMORIALLY', 'PSEUDAPOSPORY', 
+    'REFRACTORILY', 'PROVOKINGLY', 'MICROBELESS', 'REFININGLY', 'THURIFICATION', 'OESTRADIOL', 'INADAPTABILITY', 'CINCHONOLOGY', 
+    'INTERREIGN', 'INFERNALIZE', 'AREFACTION', 'ALLOTHEISM', 'ANGIOMATOSIS', 'SUBARTICLE', 'IMPASSIVELY', 'ASTARBOARD', 'SEPTEMVIOUS', 
+    'UNBENDINGLY', 'REFRANGIBILITY', 'CRASSAMENTUM', 'CATEGORIZATION', 'REFRESHFULLY', 'PSEUDOPRINCELY', 'ANTIGROWTH', 'ARTINSKIAN', 
+    'UNEXPLOITATION', 'MONKFLOWER', 'UNDELIBERATELY', 'XEROPHAGIA', 'OUACHITITE', 'COTEMPORANEOUS', 'STRENGTHLESS', 'PULSOMETER', 
+    'RUFOTESTACEOUS', 'SPODOGENIC', 'REPUTATIONLESS', 'SEARCHABLENESS', 'NECROGENIC', 'MACRODACTYLY', 'UNASTERISK', 'CATECHETICALLY', 
+    'MISERABILISTIC', 'PYROHELIOMETER', 'UNREFITTED', 'TRIDECILATERAL', 'RESUMPTIVELY', 'LIMNOLOGICAL', 'TAPEMAKING', 'HISTOTROPIC', 
+    'BRITANNICALLY', 'INTROVERSIVE', 'SESQUITERPENE', 'DERMATOPHAGUS', 'THREPSOLOGY', 'SCOOPINGLY', 'UNINERVATE', 'SCOREKEEPER', 
+    'XENOPTERAN', 'MASCULATION', 'PORTULACARIA', 'JIMBERJAWED', 'SPHEROIDITY', 'SEMICARBAZIDE', 'NONGREMIAL', 'LICHENOGRAPHER', 
+    'BUCCOLABIAL', 'ANTIGIGMANIC', 'CHILDCROWING', 'OSTEOCLAST', 'SWEETHEARTING', 'STERNOFACIALIS', 'RECAPITULATOR', 'TEXTUARIST', 
+    'BESTOWABLE', 'SEMEOSTOMA', 'AMOEBOGENIAE', 'PITTOSPORACEAE', 'PLAGIOPATAGIUM', 'HYPERMETROPY', 'CUMBERSOME', 'FIERCEHEARTED', 
+    'LISSAMPHIBIAN', 'PSEUDORUNIC', 'MITOCHONDRIA', 'PROVOCATIVE', 'CHROMONEMA', 'OMENTOPEXY', 'SCROBICULUS', 'RETROXIPHOID', 
+    'INAPPERTINENT', 'UNHURTFULLY', 'RESELECTION', 'MYZOSTOMOUS', 'UNGENUINENESS', 'NAPHTHALATE', 'OCCIDENTAL', 'UNCOQUETTISHLY', 
+    'BRITISHHOOD', 'ORNITHIVOROUS', 'BLEACHWORKS', 'SULPHITATION', 'HISTOTROPIC', 'SPINIBULBAR', 'MYZODENDRACEAE', 'EPITOMICAL', 
+    'PROBLEMIST', 'SWAMPBERRY', 'ELECTRONICS', 'TELLINACEA', 'PRECLOSURE', 'WHERESOMEVER', 'OMNIMENTAL', 'ELEOMARGARIC', 'JANTHINIDAE', 
+    'QUARRELPROOF', 'SARCASTICALLY', 'HYALOMUCOID', 'ATTENUATIVE', 'EXPIRATION'];
+  } else if (difficulty=="Impossible"){
+    var words = ['LABYRINTHIBRANCH', 'PROGRESSIVENESS', 'BENZOQUINOXALINE', 'SUBBRACHYCEPHALY', 'STETHOPHONOMETER', 'TRACHELOSCAPULAR', 
+    'PREDISPLACEMENT', 'SULPHOANTIMONATE', 'SEPTATOARTICULATE', 'COCCOTHRAUSTINE', 'COUNTERAPPELLANT', 'PSEUDOARTICULATION', 'PLENIPOTENTIARY', 
+    'INTRANSMISSIBLE', 'SEMIPROFESSIONALIZED', 'PTERYGOQUADRATE', 'UNEXHAUSTIVENESS', 'PYRAMIDOATTENUATE', 'UNRECONSTRUCTED', 
+    'UNSUBSTANTIALLY', 'MACRORHAMPHOSIDAE', 'LAMINIPLANTATION', 'PARACHROMATOSIS', 'CONGRESSIONALLY', 'INAPPLICABLENESS', 
+    'CIRCUMNAVIGATOR', 'DEMONOLOGICALLY', 'LYMPHOBLASTOSIS', 'AEROPHILATELIST', 'ASTROSPECTROSCOPIC', 'SUPERINDIVIDUAL', 
+    'DIHYDRONAPHTHALENE', 'MARRIAGEABILITY', 'CATASTROPHICALLY', 'CELIOSALPINGOTOMY', 'ENTEROPARALYSIS', 'CHRISTIANIZATION', 
+    'PALEOHERPETOLOGIST', 'HYDROSULPHOCYANIC', 'IRRECLAIMABILITY', 'COUNTERCLOCKWISE', 'SYNENTOGNATHOUS', 'PSEUDOISOMERISM', 
+    'RUDIMENTARINESS', 'HEMATODYSTROPHY', 'METHYLETHYLACETIC', 'CRYSTALLOGENICAL', 'COUNTERPROPAGANDA', 'REMONSTRATIVELY', 
+    'BIOBIBLIOGRAPHY', 'AURICULOVENTRICULAR', 'CONSERVATORSHIP', 'EUDIOMETRICALLY', 'INTRALARYNGEALLY', 'SYLLOGISTICALLY', 'UNCONSIDERINGLY', 
+    'NEURODERMATOSIS', 'OVERSOLICITOUSLY', 'NONSUBSTANTIALITY', 'SPERMATOBLASTIC', 'NONREPRESENTATIONALISM', 'ULTRADEMOCRATIC', 
+    'PERIPANCREATITIS', 'SUBTERRANEOUSLY', 'SUBSTRATOSPHERE', 'MEGALOKARYOCYTE', 'ALUMINOSILICATE', 'SEPTOCYLINDRIUM', 
+    'PHRENICOPERICARDIAC', 'CARTILAGINIFICATION', 'METAMORPHOSABLE', 'ANTHRAHYDROQUINONE', 'BACCHANALIANISM', 'CYLINDROCONICAL', 
+    'INDEFINABLENESS', 'INCONSECUTIVELY', 'SEMICIRCUMFERENCE', 'SPHINCTERECTOMY', 'DIAZOTIZABILITY', 'UNDERVOCABULARIED', 'INDISPUTABILITY', 
+    'OVERREACHINGNESS', 'TOPOGRAPHOMETRIC', 'PHENOLSULPHONIC', 'CONTRAVINDICATE', 'LYMPHANGIOENDOTHELIOMA', 'MAGNESIOFERRITE', 
+    'PHOTOELECTRICAL', 'PHRENOMAGNETISM', 'PERCRYSTALLIZATION', 'PSYCHOREALISTIC', 'IMMEASURABILITY', 'VISCEROPARIETAL', 'DEHYDROASCORBIC', 
+    'SUPEREXCRESCENCE', 'COUNTERMANIFESTO', 'ENTEROLITHIASIS', 'HISTOGENETICALLY', 'PNEUMONOPHTHISIS', 'CHRISTIANOPAGANISM', 'ANGIOSPERMATOUS', 
+    'SULPHOPROPIONIC', 'PREJOURNALISTIC', 'SPINOSODENTICULATE', 'ASTROSPECTROSCOPIC', 'MICROLEPIDOPTERON', 'UNSPONTANEOUSLY', 'INTERREFLECTION', 
+    'UNHACKNEYEDNESS', 'COCCOTHRAUSTINE', 'ARTHROSYNOVITIS', 'FRENCHIFICATION', 'UNPROFESSIONALISM', 'ELECTROSTENOLYSIS', 'INTERHABITATION', 
+    'PATHOMETABOLISM', 'CHONDROCORACOID', 'COUNTERENTHUSIASM', 'ULTRAIMPERIALISM', 'MONOBROMOACETANILIDE', 'SUPERMAGNIFICENT', 'MUSCULOMEMBRANOUS', 
+    'LAPAROTRACHELOTOMY', 'REPARTICIPATION', 'PREINTELLIGENTLY', 'SUPEREXCRESCENCE', 'DUODENOCHOLECYSTOSTOMY', 'PROTUBERANTNESS', 'SEMIDECUSSATION', 
+    'INDIGESTIBILITY', 'BIBLICOLITERARY', 'CONSEQUENTIALITY', 'ULTRACONSCIENTIOUS', 'NATURALISTICALLY', 'UNCOMPREHENDING', 'ERYTHROCYTOBLAST', 
+    'DEVELOPMENTARIAN', 'ANTIFUNDAMENTALIST', 'NONPHYSIOLOGICAL', 'HEXATETRAHEDRON', 'IMPENITIBLENESS', 'ANTIHIERARCHIST', 'INDEFATIGABLENESS', 
+    'ANTIPATRIARCHAL', 'PARIETOSPHENOIDAL', 'PROBATIONERHOOD', 'SUBINFLAMMATION', 'PSEUDORHEUMATIC', 'UNDERINSTRUMENT', 'OVERSCRUPULOUSNESS'];
+  }
+  var word = words[Math.floor(Math.random() * words.length)];
+  return word;
+}
+
+function update_displayed_progress(progress){ // standalone
+  var new_displayed_progress = "";
+  var answer_length = progress.length;
+  // looping through progress
+  for (var i = 0; i < answer_length; i++){
+    var temp = progress.charAt(i);
+    if (temp == "_") {
+      new_displayed_progress = new_displayed_progress.concat("__ ");
+    } else {
+      new_displayed_progress = new_displayed_progress.concat(temp, " ");
+    }
+  }
+  var displayed_progress = document.getElementById("displayed_progress");
+  displayed_progress.textContent = new_displayed_progress;
+}
+
+function change_image(action) {
+  var hangman_img = document.getElementById("hangman_img"); // img
+  var current_img = document.getElementById("current_img"); // integer
+  if (action == "next") {
+    var newindex = parseInt(current_img.textContent) + 1;
+  } else { // action == "reset"
+    var newindex = 0;
+  }
+  current_img.textContent = newindex;
+  var newsrc = hangman_img.src.slice(0, 61).concat("/hangman", String(newindex), ".jpg");
+  hangman_img.src = newsrc;
+}
+
+function start(){ // require generate_random_word
+  // generate new random word
+  var random_word = generate_random_word();
+  // reset progress + displayed progress
+  var length = random_word.length;
+  var progress = document.getElementById("progress");
+  progress.textContent = "_".repeat(length);
+  update_displayed_progress(progress.textContent);
+  // update answer element
+  var answer_element = document.getElementById("answer");
+  answer_element.textContent = random_word;
+  // reset start button
+  var start_button = document.getElementById("start");
+  start_button.innerHTML = "Reset";
+  // reset guessed alphabets
+  var guessed_alphabets = document.getElementById("guessed_alphabets");
+  guessed_alphabets.textContent = "";
+  // reset message
+  var message = document.getElementById("message");
+  message.textContent = "Let's not hang this time!";
+  // reset hangman image
+  change_image("reset");
+  // reset lives left
+  var lives = document.getElementById("lives");
+  lives.textContent = "Lives left: 10";
+}
+
+function getIndicesOf(searchStr, str) { // standalone
+    var searchStrLen = searchStr.length;
+    if (searchStrLen == 0) {
+        return [];
+    }
+    var startIndex = 0, index, indices = [];
+    while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+        indices.push(index);
+        startIndex = index + searchStrLen;
+    }
+    return indices;
+}
+
+String.prototype.replaceAt = function(index, replacement) { // standalone
+  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
+function correct_guess(alpha){ // require getIndicesOf, string.replaceAt, construct_displayed_progress
+  // get the answer
+  var answer = document.getElementById("answer").textContent;
+  // get index of correct alphabet
+  var indices = getIndicesOf(alpha, answer);
+  // loop indices and update progress 
+  var progress = document.getElementById("progress");
+  for (var i = 0; i < indices.length; i++){
+    progress.textContent = progress.textContent.replaceAt(indices[i], alpha);
+  }
+  // use progress to construct displayed_progress
+  update_displayed_progress(progress.textContent);
+}
+
+function wrong_guess(alpha) {
+  change_image("next"); // one step closer to hanging
+  var lives = document.getElementById("lives");
+  var num_lives = lives.textContent.slice(12);
+  lives.textContent = "Lives left: ".concat(num_lives-1);
+}
+
+function check_win(){
+  var progress = document.getElementById("progress").textContent;
+  if (progress.includes("_")){ // answer not solved yet
+    return false;
+  } else if (progress.length == 0){ // no answer generated yet
+    return false;
+  }
+  return true;
+}
+
+function win_procedure(){
+  // edit winner message on message element
+  var message = document.getElementById("message");
+  message.textContent = "Congratz! Winner! Winner! Chicken dinner!";
+  // change play button to "replay"
+  var restart_button = document.getElementById("start");
+  restart_button.innerHTML = "Replay";
+  // add score
+  var difficulty = document.getElementById("difficulty").textContent.slice(19);
+  var score_element = document.getElementById("score");
+  var score = score_element.textContent.slice(6);
+  var gain = { 
+                "Easy"        : 1,
+                "Medium"      : 2,
+                "Hard"        : 5,
+                "Impossible"  : 10
+              };
+  var newscore = parseInt(score) + parseInt(gain[difficulty]);
+  score_element.textContent = "Score: ".concat(newscore);
+}
+
+function check_loss(){
+  var current_img = document.getElementById("current_img");
+  var lives = document.getElementById("lives").textContent.slice(12);
+  if (lives==0){
+    return true;
+  }
+  return false;
+}
+
+function reveal(){
+  if (check_loss()){
+    var answer = document.getElementById("answer").textContent;
+    update_displayed_progress(answer);
+  } else if (check_win()){
+    window.alert("You already won!");
+  } else {
+    window.alert("Not yet!");
+  }
+}
+
+function loss_procedure(){
+  var message = document.getElementById("message");
+  message.textContent = "You hang. Try again!";
+  var restart_button = document.getElementById("start");
+  restart_button.innerHTML = "Try again";
+}
+
+function myAlert(){
+  var message = document.getElementById("message").textContent;
+  window.alert(message);
+}
+
+function guess_alpha(alpha){ // require correct guess, wrong guess
+  if (check_loss() | check_win()){ // already win or lose, no more guesses!
+    return false;
+  }
+  var correct_word = document.getElementById("answer");
+  if (correct_word.textContent == ""){
+    window.alert("Start a game first!");
+    return false;
+  }
+  var guessed_alphabets = document.getElementById("guessed_alphabets");
+  var message = document.getElementById("message");
+  // already guessed this alphabet
+  if (guessed_alphabets.textContent.includes(alpha)){
+    message.textContent = "You already guessed this alphabet!";
+  } 
+  // new alphabet
+  else {
+    // var correct_word = document.getElementById("answer");
+    if (correct_word.textContent.includes(alpha)) {
+      correct_guess(alpha);
+      message.textContent = "Not getting hanged just yet!";
+      if (check_win()){
+        win_procedure();
+        // alert winner message
+        setTimeout( myAlert , 500); // 2 second 
+      };
+    } else {
+      wrong_guess(alpha);
+      message.textContent = "One step closer to being hanged!";
+      if (check_loss()){
+        loss_procedure();
+        // alert loss message
+        setTimeout( myAlert , 500); // 2 second 
+      };
+    }
+    guessed_alphabets.textContent = guessed_alphabets.textContent.concat(alpha);
+  }
+}
+
+</script>
