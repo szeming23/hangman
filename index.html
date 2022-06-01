@@ -38,32 +38,32 @@
   <br>
   <br>
   <!-- ALPHABET BUTTONS-->
-  <button id="A_button" onclick="guess_alpha('A')" bg="blue">A</button>
-  <button id="B_button" onclick="guess_alpha('B')">B</button>
-  <button id="C_button" onclick="guess_alpha('C')">C</button>
-  <button id="D_button" onclick="guess_alpha('D')">D</button>
-  <button id="E_button" onclick="guess_alpha('E')">E</button>
-  <button id="F_button" onclick="guess_alpha('F')">F</button>
-  <button id="G_button" onclick="guess_alpha('G')">G</button>
-  <button id="H_button" onclick="guess_alpha('H')">H</button>
-  <button id="I_button" onclick="guess_alpha('I')">I</button><br>
-  <button id="J_button" onclick="guess_alpha('J')">J</button>
-  <button id="K_button" onclick="guess_alpha('K')">K</button>
-  <button id="L_button" onclick="guess_alpha('L')">L</button>
-  <button id="M_button" onclick="guess_alpha('M')">M</button>
-  <button id="N_button" onclick="guess_alpha('N')">N</button>
-  <button id="O_button" onclick="guess_alpha('O')">O</button>
-  <button id="P_button" onclick="guess_alpha('P')">P</button>
-  <button id="Q_button" onclick="guess_alpha('Q')">Q</button>
-  <button id="R_button" onclick="guess_alpha('R')">R</button><br>
-  <button id="S_button" onclick="guess_alpha('S')">S</button>
-  <button id="T_button" onclick="guess_alpha('T')">T</button>
-  <button id="U_button" onclick="guess_alpha('U')">U</button>
-  <button id="V_button" onclick="guess_alpha('V')">V</button>
-  <button id="W_button" onclick="guess_alpha('W')">W</button>
-  <button id="X_button" onclick="guess_alpha('X')">X</button>
-  <button id="Y_button" onclick="guess_alpha('Y')">Y</button>
-  <button id="Z_button" onclick="guess_alpha('Z')">Z</button>
+  <button id="A_button" class = "unclicked_button" onclick="guess_alpha('A')" bg="blue">A</button>
+  <button id="B_button" class = "unclicked_button" onclick="guess_alpha('B')">B</button>
+  <button id="C_button" class = "unclicked_button" onclick="guess_alpha('C')">C</button>
+  <button id="D_button" class = "unclicked_button" onclick="guess_alpha('D')">D</button>
+  <button id="E_button" class = "unclicked_button" onclick="guess_alpha('E')">E</button>
+  <button id="F_button" class = "unclicked_button" onclick="guess_alpha('F')">F</button>
+  <button id="G_button" class = "unclicked_button" onclick="guess_alpha('G')">G</button>
+  <button id="H_button" class = "unclicked_button" onclick="guess_alpha('H')">H</button>
+  <button id="I_button" class = "unclicked_button" onclick="guess_alpha('I')">I</button><br>
+  <button id="J_button" class = "unclicked_button" onclick="guess_alpha('J')">J</button>
+  <button id="K_button" class = "unclicked_button" onclick="guess_alpha('K')">K</button>
+  <button id="L_button" class = "unclicked_button" onclick="guess_alpha('L')">L</button>
+  <button id="M_button" class = "unclicked_button" onclick="guess_alpha('M')">M</button>
+  <button id="N_button" class = "unclicked_button" onclick="guess_alpha('N')">N</button>
+  <button id="O_button" class = "unclicked_button" onclick="guess_alpha('O')">O</button>
+  <button id="P_button" class = "unclicked_button" onclick="guess_alpha('P')">P</button>
+  <button id="Q_button" class = "unclicked_button" onclick="guess_alpha('Q')">Q</button>
+  <button id="R_button" class = "unclicked_button" onclick="guess_alpha('R')">R</button><br>
+  <button id="S_button" class = "unclicked_button" onclick="guess_alpha('S')">S</button>
+  <button id="T_button" class = "unclicked_button" onclick="guess_alpha('T')">T</button>
+  <button id="U_button" class = "unclicked_button" onclick="guess_alpha('U')">U</button>
+  <button id="V_button" class = "unclicked_button" onclick="guess_alpha('V')">V</button>
+  <button id="W_button" class = "unclicked_button" onclick="guess_alpha('W')">W</button>
+  <button id="X_button" class = "unclicked_button" onclick="guess_alpha('X')">X</button>
+  <button id="Y_button" class = "unclicked_button" onclick="guess_alpha('Y')">Y</button>
+  <button id="Z_button" class = "unclicked_button" onclick="guess_alpha('Z')">Z</button>
   <br>
   <br>
   <!-- Text for progress of guessed word: -->
@@ -200,6 +200,19 @@ function change_image(action) {
   hangman_img.src = newsrc;
 }
 
+function toggle_button_visibility(alphabets, task) {
+  for (let i = 0; i < alphabets.length; i++) {
+    var alphabet = alphabets.charAt(i);
+    var button_id = alphabet.concat("_button");
+    var button_element = document.getElementById(button_id);
+    if (task == "reset") {
+      button_element.style.visibility = "visible";
+    } else if (task == "hide") {
+      button_element.style.visibility = "hidden";
+    }
+  }
+}
+
 function start(){ // require generate_random_word
   // generate new random word
   var random_word = generate_random_word();
@@ -214,8 +227,9 @@ function start(){ // require generate_random_word
   // reset start button
   var start_button = document.getElementById("start");
   start_button.innerHTML = "Reset";
-  // reset guessed alphabets
+  // reset buttons to visible, then reset guessed alphabets
   var guessed_alphabets = document.getElementById("guessed_alphabets");
+  toggle_button_visibility(guessed_alphabets.textContent, "reset");
   guessed_alphabets.textContent = "";
   // reset message
   var message = document.getElementById("message");
@@ -316,17 +330,27 @@ function reveal(){
   }
 }
 
+function reset_score() {
+  var score_element = document.getElementById("score");
+  score_element.textContent = "Score: 0";
+}
+
 function loss_procedure(){
+  // change to loss message
   var message = document.getElementById("message");
   message.textContent = "You hang. Try again!";
+  // change play button text to "try again"
   var restart_button = document.getElementById("start");
   restart_button.innerHTML = "Try again";
+  // reset score, to introduce idea of streak for score
+  reset_score();
 }
 
 function myAlert(){
   var message = document.getElementById("message").textContent;
   window.alert(message);
 }
+
 
 function guess_alpha(alpha){ // require correct guess, wrong guess
   if (check_loss() | check_win()){ // already win or lose, no more guesses!
@@ -345,7 +369,8 @@ function guess_alpha(alpha){ // require correct guess, wrong guess
   } 
   // new alphabet
   else {
-    // var correct_word = document.getElementById("answer");
+    // regardless right or wrong, set the recently pressed button to hidden visibility
+    toggle_button_visibility(alpha, "hide");
     if (correct_word.textContent.includes(alpha)) {
       correct_guess(alpha);
       message.textContent = "Not getting hanged just yet!";
